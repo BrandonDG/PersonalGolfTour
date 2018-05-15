@@ -11,8 +11,8 @@ using System;
 namespace PersonalGolfTour.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180511183427_Migration_2")]
-    partial class Migration_2
+    [Migration("20180514230513_Migration_1")]
+    partial class Migration_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -226,17 +226,13 @@ namespace PersonalGolfTour.Data.Migrations
 
             modelBuilder.Entity("PersonalGolfTour.Models.UserTour", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.Property<int>("TourId");
-
-                    b.Property<string>("UserId1");
 
                     b.HasKey("UserId", "TourId");
 
                     b.HasIndex("TourId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserTour");
                 });
@@ -303,7 +299,8 @@ namespace PersonalGolfTour.Data.Migrations
 
                     b.HasOne("PersonalGolfTour.Models.ApplicationUser", "User")
                         .WithMany("UserTours")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

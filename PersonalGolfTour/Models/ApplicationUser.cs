@@ -12,6 +12,6 @@ namespace PersonalGolfTour.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string DisplayName { get; set; }
-        public List<UserTour> UserTours { get; set; }
+        public List<UserTour> UserTours { get; set; } = new List<UserTour>();
     }
 }

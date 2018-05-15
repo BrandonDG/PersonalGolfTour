@@ -14,10 +14,8 @@ namespace PersonalGolfTour.Models
         public static void Initialize(ApplicationDbContext db)
         {
             ApplicationUser[] users = SeedUsers(db);
-            //await SeedUsers2(db, userManager);
 
             Tour[] tours = getTours();
-            TourEvent[] tourEvents = getTourEvents(db);
 
             if (!db.Tours.Any())
             {
@@ -27,7 +25,7 @@ namespace PersonalGolfTour.Models
                 }
                 db.SaveChanges();
             }
-
+            TourEvent[] tourEvents = getTourEvents(db);
             if (!db.TourEvents.Any())
             {
                 foreach (TourEvent te in tourEvents)
@@ -37,13 +35,9 @@ namespace PersonalGolfTour.Models
                 db.SaveChanges();
             }
 
-            db.AddRange(
-                new UserTour { Tour = tours[0], User = users[0] },
-                new UserTour { Tour = tours[1], User = users[0] },
-                new UserTour { Tour = tours[0], User = users[1] },
-                new UserTour { Tour = tours[1], User = users[1] },
-                new UserTour { Tour = tours[2], User = users[1] }
-                );
+            Tour testTour = db.Tours.FirstOrDefault(t => t.TourName == "Tour1");
+            ApplicationUser testUser = db.Users.FirstOrDefault(u => u.NormalizedEmail == "A@A.A");
+            testTour.UserTours.Add(new UserTour { Tour = testTour, User = testUser });
             db.SaveChanges();
         }
 
@@ -262,16 +256,14 @@ namespace PersonalGolfTour.Models
             return tourEvents;
         }
 
-        private static UserTour[] getUserTour(ApplicationDbContext context)
+        private static void getUserTour(ApplicationDbContext context)
         {
-            UserTour[] userTours =
-            {
-                new UserTour()
-                {
-
-                }
-            };
-            return userTours;
+            Tour tour1 = context.Tours.FirstOrDefault(t => t.TourName == "Tour1");
+            Tour tour2 = context.Tours.FirstOrDefault(t => t.TourName == "Tour2");
+            Tour tour3 = context.Tours.FirstOrDefault(t => t.TourName == "Tour3");
+            //ApplicationUser adminUser = context.Users.FirstOrDefault(u => u.NormalizedEmail == "A@A.A");
+            ApplicationUser memberUser = context.Users.FirstOrDefault(u => u.NormalizedEmail == "M@M.M");
+            //tour1.UserTours.Add(new UserTour { Tour = tour1, User = adminUser });
         }
     }
 }

@@ -26,5 +26,6 @@ namespace PersonalGolfTour.Data
         }
         public DbSet<Tour> Tours { get; set; }
         public DbSet<TourEvent> TourEvents { get; set; }
+        //public DbSet<UserTour> UserTours { get; set; }
     }
 }

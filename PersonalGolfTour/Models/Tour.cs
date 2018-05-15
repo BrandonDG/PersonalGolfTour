@@ -16,6 +16,6 @@ namespace PersonalGolfTour.Models
         //public Dictionary<int, int> RuleSet { get; set; }
         //public Dictionary<string, int> Standings { get; set; }
         public List<TourEvent> Events { get; set; }
-        public List<UserTour> UserTours { get; set; }
+        public List<UserTour> UserTours { get; set; } = new List<UserTour>();
     }
 }

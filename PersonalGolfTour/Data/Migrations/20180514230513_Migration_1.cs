@@ -5,10 +5,37 @@ using System.Collections.Generic;
 
 namespace PersonalGolfTour.Data.Migrations
 {
-    public partial class Migration_2 : Migration
+    public partial class Migration_1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropIndex(
+                name: "IX_AspNetUserRoles_UserId",
+                table: "AspNetUserRoles");
+
+            migrationBuilder.DropIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles");
+
+            migrationBuilder.AddColumn<string>(
+                name: "DisplayName",
+                table: "AspNetUsers",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "FirstName",
+                table: "AspNetUsers",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "LastName",
+                table: "AspNetUsers",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "Tours",
                 columns: table => new
@@ -51,9 +78,8 @@ namespace PersonalGolfTour.Data.Migrations
                 name: "UserTour",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false),
-                    TourId = table.Column<int>(nullable: false),
-                    UserId1 = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: false),
+                    TourId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,12 +91,26 @@ namespace PersonalGolfTour.Data.Migrations
                         principalColumn: "TourId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserTour_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_UserTour_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TourEvents_TourId",
@@ -82,14 +122,21 @@ namespace PersonalGolfTour.Data.Migrations
                 table: "UserTour",
                 column: "TourId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_UserTour_UserId1",
-                table: "UserTour",
-                column: "UserId1");
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                table: "AspNetUserTokens",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                table: "AspNetUserTokens");
+
             migrationBuilder.DropTable(
                 name: "TourEvents");
 
@@ -98,6 +145,42 @@ namespace PersonalGolfTour.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tours");
+
+            migrationBuilder.DropIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles");
+
+            migrationBuilder.DropColumn(
+                name: "DisplayName",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "FirstName",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "LastName",
+                table: "AspNetUsers");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_UserId",
+                table: "AspNetUserRoles",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName");
         }
     }
 }

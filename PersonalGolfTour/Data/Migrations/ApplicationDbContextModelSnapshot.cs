@@ -225,17 +225,13 @@ namespace PersonalGolfTour.Data.Migrations
 
             modelBuilder.Entity("PersonalGolfTour.Models.UserTour", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.Property<int>("TourId");
-
-                    b.Property<string>("UserId1");
 
                     b.HasKey("UserId", "TourId");
 
                     b.HasIndex("TourId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserTour");
                 });
@@ -302,7 +298,8 @@ namespace PersonalGolfTour.Data.Migrations
 
                     b.HasOne("PersonalGolfTour.Models.ApplicationUser", "User")
                         .WithMany("UserTours")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
