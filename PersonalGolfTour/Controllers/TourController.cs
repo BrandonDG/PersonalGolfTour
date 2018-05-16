@@ -27,8 +27,6 @@ namespace PersonalGolfTour.Controllers
         {
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
             string id = _userManager.GetUserId(User);
-            //_context.Tours.Include(t => t.UserTours.Where(ut => ut.UserId.Equals(id)));
-            //return View(await _context.Tours.ToListAsync());
             var query = from tour in _context.Tours
                         where tour.UserTours.Any(ut => ut.UserId.Equals(id))
                         select tour;
