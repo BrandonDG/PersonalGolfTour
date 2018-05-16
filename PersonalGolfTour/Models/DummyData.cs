@@ -35,9 +35,7 @@ namespace PersonalGolfTour.Models
                 db.SaveChanges();
             }
 
-            Tour testTour = db.Tours.FirstOrDefault(t => t.TourName == "Tour1");
-            ApplicationUser testUser = db.Users.FirstOrDefault(u => u.NormalizedEmail == "A@A.A");
-            testTour.UserTours.Add(new UserTour { Tour = testTour, User = testUser });
+            //getUserTour(db);
             db.SaveChanges();
         }
 
@@ -261,9 +259,12 @@ namespace PersonalGolfTour.Models
             Tour tour1 = context.Tours.FirstOrDefault(t => t.TourName == "Tour1");
             Tour tour2 = context.Tours.FirstOrDefault(t => t.TourName == "Tour2");
             Tour tour3 = context.Tours.FirstOrDefault(t => t.TourName == "Tour3");
-            //ApplicationUser adminUser = context.Users.FirstOrDefault(u => u.NormalizedEmail == "A@A.A");
+            ApplicationUser adminUser = context.Users.FirstOrDefault(u => u.NormalizedEmail == "A@A.A");
             ApplicationUser memberUser = context.Users.FirstOrDefault(u => u.NormalizedEmail == "M@M.M");
-            //tour1.UserTours.Add(new UserTour { Tour = tour1, User = adminUser });
+            tour1.UserTours.Add(new UserTour { Tour = tour1, User = adminUser });
+            tour2.UserTours.Add(new UserTour { Tour = tour2, User = adminUser });
+            tour2.UserTours.Add(new UserTour { Tour = tour2, User = memberUser });
+            tour3.UserTours.Add(new UserTour { Tour = tour3, User = memberUser });
         }
     }
 }
