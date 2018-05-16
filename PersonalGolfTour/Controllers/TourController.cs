@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +14,25 @@ namespace PersonalGolfTour.Controllers
     public class TourController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TourController(ApplicationDbContext context)
+        public TourController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Tour
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tours.ToListAsync());
+            System.Security.Claims.ClaimsPrincipal currentUser = this.User;
+            string id = _userManager.GetUserId(User);
+            //_context.Tours.Include(t => t.UserTours.Where(ut => ut.UserId.Equals(id)));
+            //return View(await _context.Tours.ToListAsync());
+            var query = from tour in _context.Tours
+                        where tour.UserTours.Any(ut => ut.UserId.Equals(id))
+                        select tour;
+            return View(query);
         }
 
         // GET: Tour/Details/5
