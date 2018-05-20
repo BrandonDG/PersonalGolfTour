@@ -20,7 +20,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourStandings">Standings</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourPlayers">Players</a></li>
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourPlayers" asp-route-id="@Model.TourId">Players</a></li>
                 <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Rules</a></li>
             </ul>
         </div>

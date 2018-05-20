@@ -1,7 +1,7 @@
-﻿@model ApplicationUser
+﻿@model IEnumerable<ApplicationUser>
 @{
     ViewData["Title"] = "TourPlayers";
-    Layout = "_TourLayout";
+    //Layout = "_TourLayout";
 }
 
 <div class="jumbotron">
@@ -28,7 +28,37 @@
 </nav>
 
 <h2>TourPlayers</h2>
-
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DisplayName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 <!--
 <div>
     <a asp-action="Edit" asp-route-id="Model.TourId">Edit</a> |

@@ -63,6 +63,7 @@ namespace PersonalGolfTour.Controllers
                           where player.UserTours.Any(ut => ut.UserId.Equals(player.Id) && ut.TourId == id)
                           select player;
 
+
             return View(players);
         }
 
