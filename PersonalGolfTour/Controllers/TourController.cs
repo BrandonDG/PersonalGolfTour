@@ -33,6 +33,39 @@ namespace PersonalGolfTour.Controllers
             return View(query);
         }
 
+        // GET: Tour/TourStandings/5
+        public async Task<IActionResult> TourStandings(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tour = await _context.Tours
+                .SingleOrDefaultAsync(m => m.TourId == id);
+            if (tour == null)
+            {
+                return NotFound();
+            }
+
+            return View(tour);
+        }
+
+        // GET: Tour/TourPlayers/5
+        public async Task<IActionResult> TourPlayers(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var players = from player in _context.Users
+                          where player.UserTours.Any(ut => ut.UserId.Equals(player.Id) && ut.TourId == id)
+                          select player;
+
+            return View(players);
+        }
+
         // GET: Tour/Details/5
         public async Task<IActionResult> Details(int? id)
         {

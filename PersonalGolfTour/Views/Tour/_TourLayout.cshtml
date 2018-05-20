@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewData["Title"] = "Tour";
+    Layout = "_Layout";
+}
+
+<h2>_TourLayout</h2>
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Tour</a></li>
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Standings</a></li>
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Rules</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+@RenderBody()
