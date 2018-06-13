@@ -11,9 +11,10 @@ using System;
 namespace PersonalGolfTour.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180529183044_Migration_2")]
+    partial class Migration_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,7 +201,7 @@ namespace PersonalGolfTour.Data.Migrations
 
                     b.HasIndex("TourId");
 
-                    b.ToTable("PlacementRules");
+                    b.ToTable("PlacementRule");
                 });
 
             modelBuilder.Entity("PersonalGolfTour.Models.Tour", b =>

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<PersonalGolfTour.Models.TourResult>
+
+@{
+    ViewData["Title"] = "TourResults";
+}
+
+<h2>TourResults</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Place)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.User.UserName)
+                </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Place)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

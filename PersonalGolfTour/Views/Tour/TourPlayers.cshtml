@@ -1,49 +1,26 @@
-﻿@model IEnumerable<ApplicationUser>
+﻿@model PersonalGolfTour.Models.TourViewModels.TourViewModel
 @{
     ViewData["Title"] = "TourPlayers";
-    //Layout = "_TourLayout";
+    Layout = "_TourLayout";
 }
-
-<div class="jumbotron">
-    <!-- <h1> Model.TourName</h1> -->
-</div>
-<nav class="navbar navbar-inverse">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourStandings">Standings</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourPlayers">Players</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Rules</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
 
 <h2>TourPlayers</h2>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DisplayName)
+                Display Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                First Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                Last Name
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.TourMembers)
         {
             <tr>
                 <td>

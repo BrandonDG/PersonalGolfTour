@@ -1,0 +1,33 @@
+﻿@model PersonalGolfTour.Models.TourViewModels.TourViewModel
+
+@{
+    ViewData["Title"] = "PlacementRules";
+    Layout = "_TourLayout";
+}
+
+<h2>PlacementRules</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    Place
+                </th>
+                <th>
+                    Points
+                </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.PlacementRules) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Place)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Points)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

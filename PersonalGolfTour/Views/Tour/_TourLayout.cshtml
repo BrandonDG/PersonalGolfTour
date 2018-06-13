@@ -1,10 +1,13 @@
-﻿
+﻿@model PersonalGolfTour.Models.TourViewModels.TourViewModel
 @{
     ViewData["Title"] = "Tour";
     Layout = "_Layout";
 }
 
 <h2>_TourLayout</h2>
+<div class="jumbotron">
+    <h1>@Model.Tour.TourName</h1>
+</div>
 <nav class="navbar navbar-inverse">
     <div class="container">
         <div class="navbar-header">
@@ -17,9 +20,9 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Tour</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Standings</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Rules</a></li>
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourStandings" asp-route-id="@Model.Tour.TourId">Standings</a></li>
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourPlayers" asp-route-id="@Model.Tour.TourId">Players</a></li>
+                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="PlacementRules" asp-route-id="@Model.Tour.TourId">Rules</a></li>
             </ul>
         </div>
     </div>

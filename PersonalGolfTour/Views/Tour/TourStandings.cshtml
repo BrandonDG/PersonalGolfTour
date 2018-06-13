@@ -1,35 +1,38 @@
-﻿@model PersonalGolfTour.Models.Tour
+﻿@model PersonalGolfTour.Models.TourViewModels.TourViewModel
 @{
     ViewData["Title"] = "TourStandings";
-    //Layout = "_TourLayout";
+    Layout = "_TourLayout";
 }
-
-<div class="jumbotron">
-    <h1>@Model.TourName</h1>
-</div>
-<nav class="navbar navbar-inverse">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourStandings">Standings</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="TourPlayers" asp-route-id="@Model.TourId">Players</a></li>
-                <li><a style="color:white;" asp-area="" asp-controller="Tour" asp-action="Index">Rules</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
 
 <h2>TourStandings</h2>
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Player
+            </th>
+            <th>
+                Points
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Standings)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Player.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Score)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.TourId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Tour.TourId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
