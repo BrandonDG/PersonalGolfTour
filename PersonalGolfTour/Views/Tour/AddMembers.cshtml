@@ -1,0 +1,19 @@
+﻿@model PersonalGolfTour.Models.TourViewModels.AddMembersViewModel
+@{
+    ViewData["Title"] = "AddMembers";
+}
+
+<h2>AddMembers</h2>
+
+<form asp-action="AddMembers">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <select multiple asp-for="SelectedMembers" asp-items="Model.MemberList"></select>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

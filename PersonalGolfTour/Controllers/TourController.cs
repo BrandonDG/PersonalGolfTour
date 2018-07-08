@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -35,6 +36,7 @@ namespace PersonalGolfTour.Controllers
             return View(query);
         }
 
+        // GET: Tour/PlacementRules
         public async Task<IActionResult> PlacementRules(int? id)
         {
             TourViewModel tvm = new TourViewModel();
@@ -46,12 +48,10 @@ namespace PersonalGolfTour.Controllers
                       select tour).FirstOrDefault();
             tvm.Tour = t;
             tvm.PlacementRules = placementrules;
-
-            //var placementrules = _context.PlacementRules.ToList();
-            //_context.Tours.Where(t => t.TourId == id).Include(t => t.PlacementRules);
             return View(tvm);
         }
 
+        /* Not necessary, will update later after further review.
         public async Task<IActionResult> TourResults()
         {
             // Query all tour events for a tour
@@ -60,7 +60,7 @@ namespace PersonalGolfTour.Controllers
             //var placementrules = _context.TourResult.ToList();
 
             return View(_context.TourResult.Include(u => u.User).Where(tr => tr.TourEvent.TourId == 1).ToList());
-        }
+        } */
 
         // GET: Tour/TourStandings/5
         public async Task<IActionResult> TourStandings(int? id)
@@ -69,6 +69,8 @@ namespace PersonalGolfTour.Controllers
             {
                 return NotFound();
             }
+
+            HttpContext.Session.SetInt32("ChosenTourId", (int)id);
 
             /*
              * Previous code, just finds a Tour based on TourId
@@ -133,6 +135,8 @@ namespace PersonalGolfTour.Controllers
         // GET: Tour/TourPlayers/5
         public async Task<IActionResult> TourPlayers(int? id)
         {
+            //id = HttpContext.Session.GetInt32("ChosenTourId");
+
             if (id == null)
             {
                 return NotFound();
@@ -144,7 +148,7 @@ namespace PersonalGolfTour.Controllers
                            select player).ToList();
             var t = (from tour in _context.Tours
                       where tour.TourId == id
-                      select tour).FirstOrDefault();
+                     select tour).FirstOrDefault();
             tvm.Tour = t;
             tvm.TourMembers = players;
 
@@ -184,6 +188,11 @@ namespace PersonalGolfTour.Controllers
         {
             if (ModelState.IsValid)
             {
+                string id = _userManager.GetUserId(User);
+                ApplicationUser currentUser = await _userManager.FindByIdAsync(id);
+                List<UserTour> tourMembers = new List<UserTour>();
+                tourMembers.Add(new UserTour { Tour = tour, User = currentUser });
+                tour.UserTours = tourMembers;
                 _context.Add(tour);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -259,6 +268,84 @@ namespace PersonalGolfTour.Controllers
 
             return View(tour);
         }
+
+        public async Task<IActionResult> AddMembers(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            HttpContext.Session.SetInt32("ChosenTourId", (int)id);
+
+            /*
+            var players = _context.Users.Select(u => new {
+                UserID = u.Id,
+                UserName = u.UserName
+            }).ToList();
+            ViewBag.Users = new MultiSelectList(players, "UserID", "UserName"); */
+
+            var av_members = (from player in _context.Users
+                                where !(player.UserTours.Any(ut => ut.UserId.Equals(player.Id) && ut.TourId == id))
+                                select player).ToList();
+
+            AddMembersViewModel amvm = new AddMembersViewModel()
+            {
+                Tour = _context.Tours.Where(t => t.TourId == id).FirstOrDefault(),
+                MemberList = new MultiSelectList(av_members, "Id", "UserName"),
+                SelectedMembers = new List<string>()
+            };
+
+            return View(amvm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMembers(AddMembersViewModel amvm)
+        {
+            Debug.WriteLine("Add Member: B4 Valid");
+            if (ModelState.IsValid)
+            {
+                Debug.WriteLine("Add Member: Start");
+                foreach (string member in amvm.SelectedMembers)
+                {
+                    Debug.WriteLine("Add Member: " + member);
+                    var player = _context.Users.Where(u => u.Id.Equals(member)).FirstOrDefault();
+                    var tour = _context.Tours.Include(ut => ut.UserTours).Where(t => t.TourId == HttpContext.Session.GetInt32("ChosenTourId")).FirstOrDefault();
+                    tour.UserTours.Add(new UserTour { Tour = tour, User = player });
+                    //tour.ToString();
+                    _context.SaveChanges();
+                }
+                Debug.WriteLine("Add Member: End");
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        /*
+        public async Task<IActionResult> AddNewMembers(string[] newmembers)
+        {
+            // loop through the newmembers string, get user w/ string id, 
+            
+            //Tour tour = _context.Tours.Where(t => t.TourId ==
+            //    HttpContext.Session.GetInt32("ChosenTourId")).FirstOrDefault();
+
+            //foreach (string uid in newmembers)
+            //{
+            //    ApplicationUser user = _context.Users.Where(u => u.Email == uid).FirstOrDefault();
+            //    tour.UserTours.Add(new UserTour { Tour = tour, User = user });
+            //}
+
+            //_context.SaveChanges(); 
+            Debug.WriteLine("Add Member: Start");
+            foreach (string member in newmembers)
+            {
+                Debug.WriteLine("Add Member:" + member);
+            }
+            Debug.WriteLine("Add Member: End");
+
+            //return View("TourPlayers", 4);
+            return RedirectToAction(nameof(Index));
+        } */
 
         // POST: Tour/Delete/5
         [HttpPost, ActionName("Delete")]
