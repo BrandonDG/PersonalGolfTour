@@ -7,6 +7,9 @@
 
 <h2>PlacementRules</h2>
 
+<p>
+    <a asp-action="CreatePlacementRule">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -16,6 +19,7 @@
                 <th>
                     Points
                 </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -27,7 +31,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Points)
             </td>
+            <td>
+                <a asp-action="DeletePlacementRule" asp-route-id="@item.PlacementRuleId">Delete</a>
+            </td>
         </tr>
 }
     </tbody>
 </table>
+
+

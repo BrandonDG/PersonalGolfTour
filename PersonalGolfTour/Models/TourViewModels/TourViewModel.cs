@@ -8,8 +8,8 @@ namespace PersonalGolfTour.Models.TourViewModels
     public class TourViewModel
     {
         public Tour Tour { get; set; }
-        public List<ApplicationUser> TourMembers { get; set; }
-        public List<PlacementRule> PlacementRules { get; set; }
-        public List<StandingsViewModel> Standings { get; set; }
+        public IEnumerable<ApplicationUser> TourMembers { get; set; }
+        public IEnumerable<PlacementRule> PlacementRules { get; set; }
+        public IEnumerable<StandingsViewModel> Standings { get; set; }
     }
 }

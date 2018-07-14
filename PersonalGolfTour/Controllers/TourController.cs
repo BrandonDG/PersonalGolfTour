@@ -36,32 +36,6 @@ namespace PersonalGolfTour.Controllers
             return View(query);
         }
 
-        // GET: Tour/PlacementRules
-        public async Task<IActionResult> PlacementRules(int? id)
-        {
-            TourViewModel tvm = new TourViewModel();
-            var placementrules = (from placementrule in _context.PlacementRules
-                        where placementrule.TourId == id
-                        select placementrule).ToList();
-            var t = (from tour in _context.Tours
-                      where tour.TourId == id
-                      select tour).FirstOrDefault();
-            tvm.Tour = t;
-            tvm.PlacementRules = placementrules;
-            return View(tvm);
-        }
-
-        /* Not necessary, will update later after further review.
-        public async Task<IActionResult> TourResults()
-        {
-            // Query all tour events for a tour
-            // Then loop and query all tour results for tour events
-
-            //var placementrules = _context.TourResult.ToList();
-
-            return View(_context.TourResult.Include(u => u.User).Where(tr => tr.TourEvent.TourId == 1).ToList());
-        } */
-
         // GET: Tour/TourStandings/5
         public async Task<IActionResult> TourStandings(int? id)
         {
@@ -71,15 +45,6 @@ namespace PersonalGolfTour.Controllers
             }
 
             HttpContext.Session.SetInt32("ChosenTourId", (int)id);
-
-            /*
-             * Previous code, just finds a Tour based on TourId
-            var tour = await _context.Tours
-                .SingleOrDefaultAsync(m => m.TourId == id);
-            if (tour == null)
-            {
-                return NotFound();
-            } */
 
             // New Code, build a TourViewModel with necessary components
             TourViewModel tvm = new TourViewModel();
@@ -251,24 +216,6 @@ namespace PersonalGolfTour.Controllers
             return View(tour);
         }
 
-        // GET: Tour/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tour = await _context.Tours
-                .SingleOrDefaultAsync(m => m.TourId == id);
-            if (tour == null)
-            {
-                return NotFound();
-            }
-
-            return View(tour);
-        }
-
         public async Task<IActionResult> AddMembers(int? id)
         {
             if (id == null)
@@ -277,13 +224,6 @@ namespace PersonalGolfTour.Controllers
             }
 
             HttpContext.Session.SetInt32("ChosenTourId", (int)id);
-
-            /*
-            var players = _context.Users.Select(u => new {
-                UserID = u.Id,
-                UserName = u.UserName
-            }).ToList();
-            ViewBag.Users = new MultiSelectList(players, "UserID", "UserName"); */
 
             var av_members = (from player in _context.Users
                                 where !(player.UserTours.Any(ut => ut.UserId.Equals(player.Id) && ut.TourId == id))
@@ -321,31 +261,23 @@ namespace PersonalGolfTour.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /*
-        public async Task<IActionResult> AddNewMembers(string[] newmembers)
+        // GET: Tour/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
-            // loop through the newmembers string, get user w/ string id, 
-            
-            //Tour tour = _context.Tours.Where(t => t.TourId ==
-            //    HttpContext.Session.GetInt32("ChosenTourId")).FirstOrDefault();
-
-            //foreach (string uid in newmembers)
-            //{
-            //    ApplicationUser user = _context.Users.Where(u => u.Email == uid).FirstOrDefault();
-            //    tour.UserTours.Add(new UserTour { Tour = tour, User = user });
-            //}
-
-            //_context.SaveChanges(); 
-            Debug.WriteLine("Add Member: Start");
-            foreach (string member in newmembers)
+            if (id == null)
             {
-                Debug.WriteLine("Add Member:" + member);
+                return NotFound();
             }
-            Debug.WriteLine("Add Member: End");
 
-            //return View("TourPlayers", 4);
-            return RedirectToAction(nameof(Index));
-        } */
+            var tour = await _context.Tours
+                .SingleOrDefaultAsync(m => m.TourId == id);
+            if (tour == null)
+            {
+                return NotFound();
+            }
+
+            return View(tour);
+        }
 
         // POST: Tour/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -362,5 +294,84 @@ namespace PersonalGolfTour.Controllers
         {
             return _context.Tours.Any(e => e.TourId == id);
         }
+
+        // Placementrules Controller Actions
+
+        // GET: Tour/PlacementRules
+        public async Task<IActionResult> PlacementRules(int? id)
+        {
+            TourViewModel tvm = new TourViewModel();
+            var placementrules = (from placementrule in _context.PlacementRules
+                                  where placementrule.TourId == id
+                                  select placementrule).ToList();
+            var t = (from tour in _context.Tours
+                     where tour.TourId == id
+                     select tour).FirstOrDefault();
+            tvm.Tour = t;
+            tvm.PlacementRules = placementrules;
+            return View(tvm);
+        }
+
+        // GET: Tour/CreatePlacementRule
+        public IActionResult CreatePlacementRule()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("CreatePlacementRule")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePlacementRule(
+            [Bind("PlacementRuleId,Place,Points")] PlacementRule placementrule)
+        {
+            Tour tour = _context.Tours.Where(t => t.TourId.Equals(
+                HttpContext.Session.GetInt32("ChosenTourId"))).Include(t => t.PlacementRules).FirstOrDefault();
+
+            if (EnsureUnique(placementrule.Place, tour.TourId))
+            {
+                // Need to put something in here that essentially says we can't 
+                // cuz it's not unique.
+                return NotFound();
+            }
+
+            tour.PlacementRules.Add(placementrule);
+            _context.SaveChanges();
+
+            return RedirectToAction("PlacementRules", new { id = tour.TourId });
+        }
+
+        public IActionResult DeletePlacementRule(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var placementrule = _context.PlacementRules.Where(pr => pr.PlacementRuleId == id)
+                .FirstOrDefault();
+            if (placementrule == null)
+            {
+                return NotFound();
+            }
+
+            return View(placementrule);
+        }
+
+        [HttpPost, ActionName("DeletePlacementRule")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePlacementRule(int id)
+        {
+            var placementrule = await _context.PlacementRules.SingleOrDefaultAsync(pr => pr.PlacementRuleId == id);
+            _context.PlacementRules.Remove(placementrule);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("PlacementRules", new { id = HttpContext.Session.GetInt32("ChosenTourId") });
+        }
+
+        private bool EnsureUnique(int place, int tourid)
+        {
+            return _context.PlacementRules.Any(pr => pr.Place == place 
+                && pr.TourId == tourid);
+        }
     }
 }
+
+
