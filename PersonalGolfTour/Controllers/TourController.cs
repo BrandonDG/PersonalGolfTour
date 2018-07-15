@@ -138,6 +138,8 @@ namespace PersonalGolfTour.Controllers
             return View(tour);
         }
 
+        // Tour Create code
+
         // GET: Tour/Create
         public IActionResult Create()
         {
@@ -164,6 +166,8 @@ namespace PersonalGolfTour.Controllers
             }
             return View(tour);
         }
+
+        // Tour Edit code
 
         // GET: Tour/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -216,6 +220,8 @@ namespace PersonalGolfTour.Controllers
             return View(tour);
         }
 
+        // Tour Add and Remove members code
+
         public async Task<IActionResult> AddMembers(int? id)
         {
             if (id == null)
@@ -260,6 +266,40 @@ namespace PersonalGolfTour.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> RemoveMemberFromTour(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Id.Equals(id));
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        [HttpPost, ActionName("RemoveMemberFromTour")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveMemberFromTourConfirmed(string id)
+        {
+            Tour tour = _context.Tours.Where(t => t.TourId.Equals(
+                HttpContext.Session.GetInt32("ChosenTourId"))).Include(t => t.UserTours).FirstOrDefault();
+
+            UserTour usertour = tour.UserTours.Where(ut => ut.UserId.Equals(id)).First();
+            tour.UserTours.Remove(usertour);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("TourPlayers", new { id = HttpContext.Session.GetInt32("ChosenTourId") });
+        }
+
+        // Tour Delete Code
 
         // GET: Tour/Delete/5
         public async Task<IActionResult> Delete(int? id)

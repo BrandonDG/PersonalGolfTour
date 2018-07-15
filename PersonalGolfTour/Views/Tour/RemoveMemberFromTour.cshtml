@@ -1,0 +1,33 @@
+﻿@model PersonalGolfTour.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "RemoveMemberFromTour";
+}
+
+<h2>RemoveMemberFromTour</h2>
+
+<h3>Are you sure you want to remove this member from the tour?</h3>
+<div>
+    <h4>Member</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DisplayName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+    </dl>
+
+    <form asp-action="RemoveMemberFromTour">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
