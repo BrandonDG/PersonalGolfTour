@@ -1,0 +1,54 @@
+﻿@model PersonalGolfTour.Models.TourViewModels.TourViewModel
+
+@{
+    ViewData["Title"] = "TourEvents";
+    Layout = "_TourLayout";
+}
+
+<h2>TourEvents</h2>
+
+<p>
+    <a asp-action="CreateTourEvent">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    TourEvent Name
+                </th>
+                <th>
+                    Location
+                </th>
+                <th>
+                    Date
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tour)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.TourEvents) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TourEventName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tour.TourId)
+            </td>
+            <td>
+                <a asp-action="TourResults" asp-route-id="@item.TourEventId">Results</a> |
+                <a asp-action="EditTourEvent" asp-route-id="@item.TourEventId">Edit</a> |
+                <a asp-action="DeleteTourEvent" asp-route-id="@item.TourEventId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,33 @@
+﻿@model PersonalGolfTour.Models.TourResult
+
+@{
+    ViewData["Title"] = "DeleteTourResult";
+}
+
+<h2>DeleteTourResult</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>TourResult</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Place)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Place)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TourEvent)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TourEvent.TourEventId)
+        </dd>
+    </dl>
+    
+    <form asp-action="DeleteTourResult">
+        <input type="hidden" asp-for="TourResultId" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

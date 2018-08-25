@@ -11,5 +11,7 @@ namespace PersonalGolfTour.Models.TourViewModels
         public IEnumerable<ApplicationUser> TourMembers { get; set; }
         public IEnumerable<PlacementRule> PlacementRules { get; set; }
         public IEnumerable<StandingsViewModel> Standings { get; set; }
+        public IEnumerable<TourEvent> TourEvents { get; set; }
+        public IEnumerable<TourResult> TourResults { get; set; }
     }
 }

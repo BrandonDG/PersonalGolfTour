@@ -10,6 +10,7 @@ namespace PersonalGolfTour.Models
         public int TourResultId { get; set; }
         public int Place { get; set; }
 
+        //public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
         public int TourEventId { get; set; }

@@ -1,30 +1,38 @@
-﻿@model IEnumerable<PersonalGolfTour.Models.TourResult>
+﻿@model PersonalGolfTour.Models.TourViewModels.TourViewModel
 
 @{
     ViewData["Title"] = "TourResults";
+    Layout = "_TourLayout";
 }
 
 <h2>TourResults</h2>
 
+<p>
+    <a asp-action="CreateTourResult" asp-route-id="@Model.Tour.TourId">Add Result</a>
+</p>
 <table class="table">
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Place)
+                    Place
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.User.UserName)
+                    Member
                 </th>
+                <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.TourResults) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Place)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+            <td>
+                <a asp-action="DeleteTourResult" asp-route-id="@item.TourResultId">Delete</a>
             </td>
         </tr>
 }

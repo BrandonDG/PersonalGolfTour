@@ -411,6 +411,288 @@ namespace PersonalGolfTour.Controllers
             return _context.PlacementRules.Any(pr => pr.Place == place 
                 && pr.TourId == tourid);
         }
+
+        // TourEvents code
+
+        public async Task<IActionResult> TourEvents(int? id)
+        {
+            TourViewModel tvm = new TourViewModel();
+
+            List<TourEvent> tourevents = (from tourevent in _context.TourEvents
+                                          where tourevent.TourId == id
+                                          select tourevent).ToList();
+            var t = (from tour in _context.Tours
+                     where tour.TourId == id
+                     select tour).FirstOrDefault();
+            tvm.Tour = t;
+            tvm.TourEvents = tourevents;
+
+            return View(tvm);
+        }
+
+        public IActionResult CreateTourEvent()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("CreateTourEvent")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTourEvent(
+            [Bind("TourEventName,Location,Date")] TourEvent tourevent)
+        {
+            Tour tour = _context.Tours.Where(t => t.TourId.Equals(
+                HttpContext.Session.GetInt32("ChosenTourId"))).Include(t => t.Events).FirstOrDefault();
+            tourevent.Tour = tour;
+            tour.Events.Add(tourevent);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("TourEvents", new { id = tour.TourId });
+        }
+
+        public IActionResult DeleteTourEvent(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tourevent = _context.TourEvents.Where(pr => pr.TourEventId == id)
+                .FirstOrDefault();
+            if (tourevent == null)
+            {
+                return NotFound();
+            }
+
+            return View(tourevent);
+        }
+
+        [HttpPost, ActionName("DeleteTourEvent")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTourEvent(int id)
+        {
+            var tourevent = await _context.TourEvents.SingleOrDefaultAsync(pr => pr.TourEventId == id);
+            _context.TourEvents.Remove(tourevent);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("TourEvents", new { id = HttpContext.Session.GetInt32("ChosenTourId") });
+        }
+
+        public async Task<IActionResult> EditTourEvent(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tourevent = await _context.TourEvents.SingleOrDefaultAsync(m => m.TourEventId == id);
+            if (tourevent == null)
+            {
+                return NotFound();
+            }
+            return View(tourevent);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTourEvent(int id, 
+            [Bind("TourEventId,TourEventName,Location,Date")] TourEvent tourevent)
+        {
+            tourevent.TourId = (int)HttpContext.Session.GetInt32("ChosenTourId");
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(tourevent);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+
+                }
+                return RedirectToAction("TourEvents", new { id = HttpContext.Session.GetInt32("ChosenTourId") });
+            }
+            return View(tourevent);
+        }
+
+        // Eventresults code
+
+            /*
+        public IActionResult CreateTourEvent()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("CreateTourEvent")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTourEvent(
+            [Bind("TourEventName,Location,Date")] TourEvent tourevent)
+        {
+            Tour tour = _context.Tours.Where(t => t.TourId.Equals(
+                HttpContext.Session.GetInt32("ChosenTourId"))).Include(t => t.Events).FirstOrDefault();
+            tourevent.Tour = tour;
+            tour.Events.Add(tourevent);
+
+            _context.SaveChanges();
+
+            return RedirectToAction("TourEvents", new { id = tour.TourId });
+        } */
+
+        public IActionResult CreateTourResult()
+        {
+            var players = (from player in _context.Users
+                           where player.UserTours.Any(ut => ut.UserId.Equals(player.Id) && ut.TourId == HttpContext.Session.GetInt32("ChosenTourId"))
+                           select player).ToList();
+
+            // ViewData["ActivityId"] = new SelectList(_context.Activities, "ActivityId", "ActivityDescription");
+            ViewData["UserId"] = new SelectList(players, "UserId", "DisplayName");
+            ViewBag.Members = new SelectList(players, "UserId", "DisplayName");
+            ViewBag.Memberss = players;
+
+            List<SelectListItem> playerlist = new List<SelectListItem>();
+
+            foreach (ApplicationUser player in players)
+            {
+                playerlist.Add(
+                    new SelectListItem
+                    {
+                        Text = player.DisplayName,
+                        Value = player.Id
+                    });
+            }
+
+            ViewBag.List = playerlist;
+
+            Debug.WriteLine("Members Size: " + players.Count);
+
+            // ViewBag.CityList = ToSelectList(_dt,"CityID","CityName");
+
+            NewTourResultViewModel ntrvm = new NewTourResultViewModel();
+
+            return View(ntrvm);
+        }
+
+        [HttpPost, ActionName("CreateTourResult")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTourResult(
+            [Bind("UserId,Place")] NewTourResultViewModel ntrvm)
+        {
+            TourEvent tourevent = _context.TourEvents.Where(t => t.TourEventId.Equals(
+                HttpContext.Session.GetInt32("ChosenEventId"))).Include(t => t.TourResults).FirstOrDefault();
+            ApplicationUser user = _context.Users.Where(u => u.Id.Equals(ntrvm.UserId)).FirstOrDefault();
+            /*
+            Debug.WriteLine("Result Test (ID): " + tourresult.TourResultId);
+            Debug.WriteLine("Result Test (UID): " + tourresult.User);
+            Debug.WriteLine("Result Test (PLACE): " + tourresult.Place);
+
+            tourevent.TourResults.Add(tourresult);
+            _context.SaveChanges(); */
+
+            Debug.WriteLine("Result Test (UID): " + ntrvm.UserId);
+            Debug.WriteLine("Result Test (PLACE): " + ntrvm.Place);
+
+            TourResult tr = new TourResult();
+            tr.User = user;
+            tr.Place = ntrvm.Place;
+
+            tourevent.TourResults.Add(tr);
+            _context.SaveChanges();
+
+            return RedirectToAction("TourResults", new { id = HttpContext.Session.GetInt32("ChosenEventId") });
+        }
+
+        /*
+        [HttpPost, ActionName("CreateTourResult")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTourResult(
+            [Bind("TourResultId") */
+
+        public async Task<IActionResult> TourResults(int? id)
+        {
+            HttpContext.Session.SetInt32("ChosenEventId", (int)id);
+
+            TourViewModel tvm = new TourViewModel();
+            
+            /*
+            List<TourResult> trs = new List<TourResult>();
+            
+
+            var tourevents = (from tourevent in _context.TourEvents
+                              where tourevent.TourId == id
+                              select tourevent).ToList();
+            var tourresults = new List<TourResult>();
+            foreach (var tourevent in tourevents)
+            {
+                var toureventresults = (from toureventresult in _context.TourResult
+                                        where toureventresult.TourEventId == tourevent.TourEventId
+                                        select toureventresult).Include(ter => ter.User).ToList();
+                tourresults.AddRange(toureventresults);
+            } */
+            var tourresults = new List<TourResult>();
+
+            var t = await _context.Tours.SingleOrDefaultAsync(m => m.TourId == HttpContext.Session.GetInt32("ChosenTourId"));
+
+            var toureventresults = (from toureventresult in _context.TourResult
+                                    where toureventresult.TourEventId == id
+                                    select toureventresult).Include(ter => ter.User).ToList();
+            tourresults.AddRange(toureventresults);
+
+            tvm.TourResults = tourresults;
+            tvm.Tour = t;
+
+            return View(tvm);
+
+            /*
+
+            var tes = _context.TourEvents.Where(te => te.TourId == id).ToList();
+
+            var t = (from tour in _context.Tours
+                     where tour.TourId == id
+                     select tour).FirstOrDefault();
+
+            // Look through events and append results to trs and put trs as tvm's view
+            foreach (TourEvent te in tes)
+            {
+                foreach (TourResult tr in te.TourResults)
+                {
+                    trs.Add(tr);
+                }
+            }
+
+            tvm.Tour = t;
+            tvm.TourResults = trs;
+
+            return View(trs);
+
+    */
+        }
+
+        public async Task<IActionResult> DeleteTourResult(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tr = _context.TourResult.Where(t => t.TourResultId == id).FirstOrDefault();
+
+            if (tr == null)
+            {
+                return NotFound();
+            }
+
+            return View(tr);
+        }
+
+        [HttpPost, ActionName("DeleteTourResult")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTourResult(int id)
+        {
+            var tr = _context.TourResult.Where(t => t.TourResultId == id).FirstOrDefault();
+            _context.TourResult.Remove(tr);
+            _context.SaveChanges();
+
+            return RedirectToAction("TourResults", new { id = HttpContext.Session.GetInt32("ChosenEventId") });
+        }
     }
 }
 
