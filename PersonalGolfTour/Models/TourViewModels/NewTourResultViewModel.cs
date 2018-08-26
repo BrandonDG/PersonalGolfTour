@@ -9,17 +9,7 @@ namespace PersonalGolfTour.Models.TourViewModels
 {
     public class NewTourResultViewModel
     {
-        /*
-        public List<ApplicationUser> users { get; set; }
-
-        [Display(Name = "Member")]
-        public string SelectedUserId { get; set; }
-
-        public IEnumerable<SelectListItem> UserItems
-        {
-            get { return new SelectList(users, "UserId", "DisplayName"); }
-        } */
-
+        public int EventId { get; set; }
         public string UserId { get; set; }
         public int Place { get; set; }
     }

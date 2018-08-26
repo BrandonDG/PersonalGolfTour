@@ -457,10 +457,6 @@ namespace PersonalGolfTour.Models
             tour1.UserTours = tour1Tours;
             tour2.UserTours = tour2Tours;
             tour3.UserTours = tour3Tours;
-            //tour1.UserTours.Add(new UserTour { Tour = tour1, User = adminUser });
-            //tour2.UserTours.Add(new UserTour { Tour = tour2, User = adminUser });
-            //tour2.UserTours.Add(new UserTour { Tour = tour2, User = memberUser });
-            //tour3.UserTours.Add(new UserTour { Tour = tour3, User = memberUser });
         }
     }
 }

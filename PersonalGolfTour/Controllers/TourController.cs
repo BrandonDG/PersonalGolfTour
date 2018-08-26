@@ -259,7 +259,6 @@ namespace PersonalGolfTour.Controllers
                     var player = _context.Users.Where(u => u.Id.Equals(member)).FirstOrDefault();
                     var tour = _context.Tours.Include(ut => ut.UserTours).Where(t => t.TourId == HttpContext.Session.GetInt32("ChosenTourId")).FirstOrDefault();
                     tour.UserTours.Add(new UserTour { Tour = tour, User = player });
-                    //tour.ToString();
                     _context.SaveChanges();
                 }
                 Debug.WriteLine("Add Member: End");
@@ -516,34 +515,12 @@ namespace PersonalGolfTour.Controllers
 
         // Eventresults code
 
-            /*
-        public IActionResult CreateTourEvent()
-        {
-            return View();
-        }
-
-        [HttpPost, ActionName("CreateTourEvent")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTourEvent(
-            [Bind("TourEventName,Location,Date")] TourEvent tourevent)
-        {
-            Tour tour = _context.Tours.Where(t => t.TourId.Equals(
-                HttpContext.Session.GetInt32("ChosenTourId"))).Include(t => t.Events).FirstOrDefault();
-            tourevent.Tour = tour;
-            tour.Events.Add(tourevent);
-
-            _context.SaveChanges();
-
-            return RedirectToAction("TourEvents", new { id = tour.TourId });
-        } */
-
         public IActionResult CreateTourResult()
         {
             var players = (from player in _context.Users
                            where player.UserTours.Any(ut => ut.UserId.Equals(player.Id) && ut.TourId == HttpContext.Session.GetInt32("ChosenTourId"))
                            select player).ToList();
 
-            // ViewData["ActivityId"] = new SelectList(_context.Activities, "ActivityId", "ActivityDescription");
             ViewData["UserId"] = new SelectList(players, "UserId", "DisplayName");
             ViewBag.Members = new SelectList(players, "UserId", "DisplayName");
             ViewBag.Memberss = players;
@@ -564,9 +541,8 @@ namespace PersonalGolfTour.Controllers
 
             Debug.WriteLine("Members Size: " + players.Count);
 
-            // ViewBag.CityList = ToSelectList(_dt,"CityID","CityName");
-
             NewTourResultViewModel ntrvm = new NewTourResultViewModel();
+            ntrvm.EventId = (int)HttpContext.Session.GetInt32("ChosenEventId");
 
             return View(ntrvm);
         }
@@ -579,13 +555,6 @@ namespace PersonalGolfTour.Controllers
             TourEvent tourevent = _context.TourEvents.Where(t => t.TourEventId.Equals(
                 HttpContext.Session.GetInt32("ChosenEventId"))).Include(t => t.TourResults).FirstOrDefault();
             ApplicationUser user = _context.Users.Where(u => u.Id.Equals(ntrvm.UserId)).FirstOrDefault();
-            /*
-            Debug.WriteLine("Result Test (ID): " + tourresult.TourResultId);
-            Debug.WriteLine("Result Test (UID): " + tourresult.User);
-            Debug.WriteLine("Result Test (PLACE): " + tourresult.Place);
-
-            tourevent.TourResults.Add(tourresult);
-            _context.SaveChanges(); */
 
             Debug.WriteLine("Result Test (UID): " + ntrvm.UserId);
             Debug.WriteLine("Result Test (PLACE): " + ntrvm.Place);
@@ -600,33 +569,12 @@ namespace PersonalGolfTour.Controllers
             return RedirectToAction("TourResults", new { id = HttpContext.Session.GetInt32("ChosenEventId") });
         }
 
-        /*
-        [HttpPost, ActionName("CreateTourResult")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTourResult(
-            [Bind("TourResultId") */
-
         public async Task<IActionResult> TourResults(int? id)
         {
             HttpContext.Session.SetInt32("ChosenEventId", (int)id);
 
             TourViewModel tvm = new TourViewModel();
-            
-            /*
-            List<TourResult> trs = new List<TourResult>();
-            
 
-            var tourevents = (from tourevent in _context.TourEvents
-                              where tourevent.TourId == id
-                              select tourevent).ToList();
-            var tourresults = new List<TourResult>();
-            foreach (var tourevent in tourevents)
-            {
-                var toureventresults = (from toureventresult in _context.TourResult
-                                        where toureventresult.TourEventId == tourevent.TourEventId
-                                        select toureventresult).Include(ter => ter.User).ToList();
-                tourresults.AddRange(toureventresults);
-            } */
             var tourresults = new List<TourResult>();
 
             var t = await _context.Tours.SingleOrDefaultAsync(m => m.TourId == HttpContext.Session.GetInt32("ChosenTourId"));
@@ -640,30 +588,6 @@ namespace PersonalGolfTour.Controllers
             tvm.Tour = t;
 
             return View(tvm);
-
-            /*
-
-            var tes = _context.TourEvents.Where(te => te.TourId == id).ToList();
-
-            var t = (from tour in _context.Tours
-                     where tour.TourId == id
-                     select tour).FirstOrDefault();
-
-            // Look through events and append results to trs and put trs as tvm's view
-            foreach (TourEvent te in tes)
-            {
-                foreach (TourResult tr in te.TourResults)
-                {
-                    trs.Add(tr);
-                }
-            }
-
-            tvm.Tour = t;
-            tvm.TourResults = trs;
-
-            return View(trs);
-
-    */
         }
 
         public async Task<IActionResult> DeleteTourResult(int? id)

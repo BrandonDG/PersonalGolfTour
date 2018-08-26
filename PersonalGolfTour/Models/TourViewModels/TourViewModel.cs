@@ -13,5 +13,6 @@ namespace PersonalGolfTour.Models.TourViewModels
         public IEnumerable<StandingsViewModel> Standings { get; set; }
         public IEnumerable<TourEvent> TourEvents { get; set; }
         public IEnumerable<TourResult> TourResults { get; set; }
+        public NewTourResultViewModel NewTourViewModel { get; set; }
     }
 }

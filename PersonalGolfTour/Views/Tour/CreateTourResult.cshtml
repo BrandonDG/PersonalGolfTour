@@ -11,21 +11,10 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="CreateTourResult">
-            
             <div class="form-group">
-                <div class="col-md-10">
-                    @* @Html.DropDownListFor(model => model.City,ViewBag.CityList as SelectList,  new { @class = "form-control"} )  *@
-                    @* @Html.DropDownList("UserId", (IEnumerable<SelectListItem>)ViewBag.List)
-                        <label asp-for="User" class="col-md-2 control-label"></label>
-                @Html.LabelFor(m=>m.SelectedFlavorId)
-                @Html.DropDownListFor(m => m.SelectedFlavorId, Model.FlavorItems)
-                @Html.ValidationMessageFor(m=>m.SelectedFlavorId)
-        @Html.DropDownListFor(model => model.User, (IEnumerable<SelectListItem>)ViewBag.List, new { @class = "form-control" })
-                    *@
-                    @Html.LabelFor(m => m.UserId)
-                    @Html.DropDownListFor(m => m.UserId, (IEnumerable<SelectListItem>)ViewBag.List, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.UserId)
-                </div>
+                @Html.LabelFor(m => m.UserId)
+                @Html.DropDownListFor(m => m.UserId, (IEnumerable<SelectListItem>)ViewBag.List, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.UserId)
             </div>
             <div class="form-group">
                 <label asp-for="Place" class="control-label"></label>
@@ -40,6 +29,6 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="TourResults" asp-route-id="@Model.EventId">Back to List</a>
 </div>
 

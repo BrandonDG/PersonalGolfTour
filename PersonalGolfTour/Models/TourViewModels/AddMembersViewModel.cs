@@ -9,7 +9,6 @@ namespace PersonalGolfTour.Models.TourViewModels
     public class AddMembersViewModel
     {
         public Tour Tour { get; set; }
-        //public SelectList MemberList { get; set; }
         public IEnumerable<SelectListItem> MemberList { get; set; }
         public IEnumerable<String> SelectedMembers { get; set; }
     }
